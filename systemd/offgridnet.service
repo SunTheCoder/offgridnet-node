@@ -9,6 +9,10 @@ ExecStart=/usr/bin/python3 app.py
 Restart=always
 RestartSec=10
 Environment=PYTHONUNBUFFERED=1
+StandardOutput=append:/var/log/offgridnet/flask.log
+StandardError=append:/var/log/offgridnet/flask-error.log
+Environment=FLASK_APP=app.py
+Environment=FLASK_ENV=production
 
 [Install]
 WantedBy=multi-user.target 
