@@ -15,7 +15,9 @@ check_status() {
 }
 
 echo "[1/6] Installing dependencies..."
-apt update && apt install -y python3 python3-pip python3-venv nginx hostapd dnsmasq git unzip dhcpcd5
+# Install dhcpcd5 with non-interactive mode to keep existing config
+DEBIAN_FRONTEND=noninteractive apt-get install -y dhcpcd5
+apt update && apt install -y python3 python3-pip python3-venv nginx hostapd dnsmasq git unzip
 check_status "Dependency installation"
 
 echo "[2/6] Setting up Wi-Fi config..."
@@ -23,13 +25,9 @@ echo "[2/6] Setting up Wi-Fi config..."
 systemctl stop wpa_supplicant
 systemctl disable wpa_supplicant
 
-# Backup existing dhcpcd.conf if it exists
-if [ -f /etc/dhcpcd.conf ]; then
-    cp /etc/dhcpcd.conf /etc/dhcpcd.conf.bak
-fi
+# Append OffGridNet configuration to dhcpcd.conf
+cat >> /etc/dhcpcd.conf << EOF
 
-# Configure static IP for wlan0 using dhcpcd
-cat > /etc/dhcpcd.conf << EOF
 # OffGridNet Access Point Configuration
 interface wlan0
     static ip_address=192.168.4.1/24
