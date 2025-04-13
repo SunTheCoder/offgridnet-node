@@ -23,14 +23,11 @@ echo "[2/6] Setting up Wi-Fi config..."
 systemctl stop wpa_supplicant
 systemctl disable wpa_supplicant
 
-# Configure wlan0 interface
-cat > /etc/network/interfaces.d/wlan0 << EOF
-allow-hotplug wlan0
-iface wlan0 inet static
-    address 192.168.4.1
-    netmask 255.255.255.0
-    network 192.168.4.0
-    broadcast 192.168.4.255
+# Configure static IP for wlan0 using dhcpcd
+cat > /etc/dhcpcd.conf << EOF
+interface wlan0
+    static ip_address=192.168.4.1/24
+    nohook wpa_supplicant
 EOF
 
 # Copy configuration files
@@ -93,6 +90,9 @@ cp frontend/index.html /var/www/html/index.html
 check_status "Frontend deployment"
 
 echo "Verifying access point configuration..."
+# Restart dhcpcd to apply new configuration
+systemctl restart dhcpcd
+
 # Check if wlan0 is up
 if ! ip link show wlan0 | grep -q "state UP"; then
     echo "Bringing up wlan0 interface..."
