@@ -15,7 +15,7 @@ check_status() {
 }
 
 echo "[1/6] Installing dependencies..."
-apt update && apt install -y python3 python3-pip nginx hostapd dnsmasq git unzip
+apt update && apt install -y python3 python3-pip python3-venv nginx hostapd dnsmasq git unzip
 check_status "Dependency installation"
 
 echo "[2/6] Setting up Wi-Fi config..."
@@ -34,8 +34,10 @@ echo "[4/6] Setting up Flask backend..."
 mkdir -p /home/sunny/offgridnet-node/backend
 chown -R sunny:sunny /home/sunny/offgridnet-node
 
-# Install Python dependencies
-pip3 install -r backend/requirements.txt
+# Create and activate virtual environment
+su - sunny -c "cd /home/sunny/offgridnet-node/backend && python3 -m venv venv"
+su - sunny -c "cd /home/sunny/offgridnet-node/backend && source venv/bin/activate && pip install --upgrade pip"
+su - sunny -c "cd /home/sunny/offgridnet-node/backend && source venv/bin/activate && pip install -r requirements.txt"
 check_status "Python dependencies installation"
 
 # Copy and set up systemd service
