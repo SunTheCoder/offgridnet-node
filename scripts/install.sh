@@ -15,7 +15,7 @@ check_status() {
 }
 
 echo "[1/6] Installing dependencies..."
-apt update && apt install -y python3 python3-pip python3-venv nginx hostapd dnsmasq git unzip
+apt update && apt install -y python3 python3-pip python3-venv nginx hostapd dnsmasq git unzip dhcpcd5
 check_status "Dependency installation"
 
 echo "[2/6] Setting up Wi-Fi config..."
@@ -23,8 +23,14 @@ echo "[2/6] Setting up Wi-Fi config..."
 systemctl stop wpa_supplicant
 systemctl disable wpa_supplicant
 
+# Backup existing dhcpcd.conf if it exists
+if [ -f /etc/dhcpcd.conf ]; then
+    cp /etc/dhcpcd.conf /etc/dhcpcd.conf.bak
+fi
+
 # Configure static IP for wlan0 using dhcpcd
 cat > /etc/dhcpcd.conf << EOF
+# OffGridNet Access Point Configuration
 interface wlan0
     static ip_address=192.168.4.1/24
     nohook wpa_supplicant
@@ -42,6 +48,7 @@ echo "[3/6] Enabling Wi-Fi services..."
 systemctl unmask hostapd
 systemctl enable hostapd
 systemctl enable dnsmasq
+systemctl enable dhcpcd
 check_status "Wi-Fi services setup"
 
 echo "[4/6] Setting up Flask backend..."
@@ -90,8 +97,10 @@ cp frontend/index.html /var/www/html/index.html
 check_status "Frontend deployment"
 
 echo "Verifying access point configuration..."
-# Restart dhcpcd to apply new configuration
+# Restart network services
 systemctl restart dhcpcd
+systemctl restart hostapd
+systemctl restart dnsmasq
 
 # Check if wlan0 is up
 if ! ip link show wlan0 | grep -q "state UP"; then
@@ -111,6 +120,7 @@ echo "Setup complete! Checking service status..."
 systemctl status offgridnet.service
 systemctl status kiwix.service
 systemctl status hostapd
+systemctl status dhcpcd
 
 echo "Access point should be available as 'OffGridNet' with password 'Datathug2024!'"
 echo "Rebooting in 5 seconds..."
