@@ -104,7 +104,7 @@ sudo systemctl status hostapd
 
 3. **Kiwix not accessible**
    - Check if service is running: `sudo systemctl status kiwix.service`
-   - Verify library file exists: `ls -l /home/pi/kiwix/data/library.xml`
+   - Verify library file exists: `ls -l /home/sunny/kiwix/data/library.xml`
 
 ## Contributing
 

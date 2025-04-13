@@ -3,8 +3,8 @@ Description=OffGridNet Flask Backend
 After=network.target
 
 [Service]
-User=pi
-WorkingDirectory=/home/pi/offgridnet-node/backend
+User=sunny
+WorkingDirectory=/home/sunny/offgridnet-node/backend
 ExecStart=/usr/bin/python3 app.py
 Restart=always
 RestartSec=10

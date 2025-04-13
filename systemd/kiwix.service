@@ -3,9 +3,9 @@ Description=Kiwix Server
 After=network.target
 
 [Service]
-User=pi
-WorkingDirectory=/home/pi/kiwix
-ExecStart=/usr/bin/kiwix-serve --library /home/pi/kiwix/data/library.xml --port 8080
+User=sunny
+WorkingDirectory=/home/sunny/kiwix
+ExecStart=/usr/bin/kiwix-serve --library /home/sunny/kiwix/data/library.xml --port 8080
 Restart=always
 RestartSec=10
 
