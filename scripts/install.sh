@@ -21,6 +21,10 @@ apt update && apt install -y python3 python3-pip python3-venv nginx hostapd dnsm
 check_status "Dependency installation"
 
 echo "[2/6] Setting up Wi-Fi config..."
+# Unblock WiFi if it's blocked by rfkill
+rfkill unblock wifi
+sleep 2
+
 # Stop any existing WiFi services
 systemctl stop wpa_supplicant
 systemctl disable wpa_supplicant
@@ -111,6 +115,13 @@ fi
 if ! systemctl is-active --quiet hostapd; then
     echo "Starting hostapd service..."
     systemctl start hostapd
+    sleep 2
+fi
+
+# Verify WiFi is unblocked
+if rfkill list wifi | grep -q "Soft blocked: yes"; then
+    echo "WiFi is still soft blocked, trying to unblock..."
+    rfkill unblock wifi
     sleep 2
 fi
 
