@@ -1,6 +1,8 @@
 [Unit]
 Description=Kiwix Server
-After=network.target
+After=network.target hostapd.service dnsmasq.service
+Requires=network.target
+Wants=hostapd.service dnsmasq.service
 
 [Service]
 User=sunny
@@ -8,6 +10,8 @@ WorkingDirectory=/home/sunny/kiwix
 ExecStart=/usr/bin/kiwix-serve --library /home/sunny/kiwix/data/library.xml --port 8080
 Restart=always
 RestartSec=10
+StandardOutput=append:/var/log/offgridnet/kiwix.log
+StandardError=append:/var/log/offgridnet/kiwix-error.log
 
 [Install]
 WantedBy=multi-user.target 

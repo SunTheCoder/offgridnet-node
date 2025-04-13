@@ -1,6 +1,8 @@
 [Unit]
 Description=OffGridNet Flask Backend
-After=network.target
+After=network.target hostapd.service dnsmasq.service
+Requires=network.target
+Wants=hostapd.service dnsmasq.service
 
 [Service]
 User=sunny
