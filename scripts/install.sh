@@ -19,8 +19,26 @@ apt update && apt install -y python3 python3-pip python3-venv nginx hostapd dnsm
 check_status "Dependency installation"
 
 echo "[2/6] Setting up Wi-Fi config..."
+# Stop any existing WiFi services
+systemctl stop wpa_supplicant
+systemctl disable wpa_supplicant
+
+# Configure wlan0 interface
+cat > /etc/network/interfaces.d/wlan0 << EOF
+allow-hotplug wlan0
+iface wlan0 inet static
+    address 192.168.4.1
+    netmask 255.255.255.0
+    network 192.168.4.0
+    broadcast 192.168.4.255
+EOF
+
+# Copy configuration files
 cp wifi-ap-config/hostapd.conf /etc/hostapd/
 cp wifi-ap-config/dnsmasq.conf /etc/dnsmasq.conf
+
+# Update hostapd configuration
+sed -i 's/^#DAEMON_CONF=""/DAEMON_CONF="\/etc\/hostapd\/hostapd.conf"/' /etc/default/hostapd
 check_status "Wi-Fi configuration"
 
 echo "[3/6] Enabling Wi-Fi services..."
@@ -74,9 +92,26 @@ echo "[6/6] Deploying frontend..."
 cp frontend/index.html /var/www/html/index.html
 check_status "Frontend deployment"
 
+echo "Verifying access point configuration..."
+# Check if wlan0 is up
+if ! ip link show wlan0 | grep -q "state UP"; then
+    echo "Bringing up wlan0 interface..."
+    ip link set wlan0 up
+    sleep 2
+fi
+
+# Check if hostapd is running
+if ! systemctl is-active --quiet hostapd; then
+    echo "Starting hostapd service..."
+    systemctl start hostapd
+    sleep 2
+fi
+
 echo "Setup complete! Checking service status..."
 systemctl status offgridnet.service
 systemctl status kiwix.service
+systemctl status hostapd
 
+echo "Access point should be available as 'OffGridNet' with password 'Datathug2024!'"
 echo "Rebooting in 5 seconds..."
 sleep 5 && reboot 
