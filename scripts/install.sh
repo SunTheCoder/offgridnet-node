@@ -44,10 +44,22 @@ cp wifi-ap-config/dnsmasq.conf /etc/dnsmasq.conf
 # Update hostapd configuration
 sed -i 's/^#DAEMON_CONF=""/DAEMON_CONF="\/etc\/hostapd\/hostapd.conf"/' /etc/default/hostapd
 
-# Enable services
+# Set up dhcpcd service
+cp systemd/dhcpcd.service /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable dhcpcd
+systemctl start dhcpcd
+
+# Set up hostapd service
+cp systemd/hostapd.service /etc/systemd/system/
+systemctl daemon-reload
 systemctl unmask hostapd
 systemctl enable hostapd
+systemctl start hostapd
+
+# Enable dnsmasq
 systemctl enable dnsmasq
+systemctl start dnsmasq
 check_status "Wi-Fi configuration"
 
 echo "[3/4] Setting up Flask backend..."
