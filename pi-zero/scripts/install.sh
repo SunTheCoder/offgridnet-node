@@ -6,6 +6,10 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+# Get the directory where this script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+PI_ZERO_DIR="$(dirname "$SCRIPT_DIR")"
+
 # Function to check if a command succeeded
 check_status() {
     if [ $? -ne 0 ]; then
@@ -51,17 +55,17 @@ iface wlan0 inet static
 EOF
 
 # Copy configuration files
-check_file "wifi-ap-config/hostapd.conf"
-check_file "wifi-ap-config/dnsmasq.conf"
-cp wifi-ap-config/hostapd.conf /etc/hostapd/
-cp wifi-ap-config/dnsmasq.conf /etc/dnsmasq.conf
+check_file "$PI_ZERO_DIR/wifi-ap-config/hostapd.conf"
+check_file "$PI_ZERO_DIR/wifi-ap-config/dnsmasq.conf"
+cp "$PI_ZERO_DIR/wifi-ap-config/hostapd.conf" /etc/hostapd/
+cp "$PI_ZERO_DIR/wifi-ap-config/dnsmasq.conf" /etc/dnsmasq.conf
 
 # Update hostapd configuration
 sed -i 's/^#DAEMON_CONF=""/DAEMON_CONF="\/etc\/hostapd\/hostapd.conf"/' /etc/default/hostapd
 
 # Set up hostapd service
-check_file "systemd/hostapd.service"
-cp systemd/hostapd.service /etc/systemd/system/
+check_file "$PI_ZERO_DIR/systemd/hostapd.service"
+cp "$PI_ZERO_DIR/systemd/hostapd.service" /etc/systemd/system/
 systemctl daemon-reload
 systemctl unmask hostapd
 systemctl enable hostapd
@@ -82,8 +86,8 @@ mkdir -p /home/sunny/offgridnet-node/backend
 chown -R sunny:sunny /home/sunny/offgridnet-node
 
 # Copy backend files
-check_file "../common/backend/requirements.txt"
-cp -r ../common/backend/* /home/sunny/offgridnet-node/backend/
+check_file "$PI_ZERO_DIR/../common/backend/requirements.txt"
+cp -r "$PI_ZERO_DIR/../common/backend/"* /home/sunny/offgridnet-node/backend/
 
 # Create and activate virtual environment
 su - sunny -c "cd /home/sunny/offgridnet-node/backend && python3 -m venv venv"
@@ -91,8 +95,8 @@ su - sunny -c "cd /home/sunny/offgridnet-node/backend && source venv/bin/activat
 su - sunny -c "cd /home/sunny/offgridnet-node/backend && source venv/bin/activate && pip install -r requirements.txt"
 
 # Copy and set up systemd service
-check_file "systemd/offgridnet.service"
-cp systemd/offgridnet.service /etc/systemd/system/
+check_file "$PI_ZERO_DIR/systemd/offgridnet.service"
+cp "$PI_ZERO_DIR/systemd/offgridnet.service" /etc/systemd/system/
 chmod 644 /etc/systemd/system/offgridnet.service
 systemctl enable offgridnet.service
 
@@ -106,14 +110,14 @@ mkdir -p /home/sunny/kiwix/data
 chown -R sunny:sunny /home/sunny/kiwix
 
 # Copy Kiwix service
-check_file "systemd/kiwix.service"
-cp systemd/kiwix.service /etc/systemd/system/
+check_file "$PI_ZERO_DIR/systemd/kiwix.service"
+cp "$PI_ZERO_DIR/systemd/kiwix.service" /etc/systemd/system/
 systemctl enable kiwix.service
 
 # Deploy frontend
-check_file "../common/frontend/index.html"
+check_file "$PI_ZERO_DIR/../common/frontend/index.html"
 mkdir -p /var/www/html
-cp ../common/frontend/index.html /var/www/html/
+cp "$PI_ZERO_DIR/../common/frontend/index.html" /var/www/html/
 
 echo "Setup complete! All services will start automatically on boot."
 echo "Access point will be available as 'OffGridNet' with password 'Datathug2024!'"
