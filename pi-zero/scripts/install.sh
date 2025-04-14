@@ -36,16 +36,21 @@ sleep 2
 systemctl stop wpa_supplicant
 systemctl disable wpa_supplicant
 
-# Configure static IP for wlan0
-cat >> /etc/dhcpcd.conf << EOF
+# Disable dhcpcd
+systemctl stop dhcpcd
+systemctl disable dhcpcd
 
-# OffGridNet Access Point Configuration
-interface wlan0
-    static ip_address=192.168.4.1/24
-    nohook wpa_supplicant
+# Set static IP for wlan0
+cat > /etc/network/interfaces.d/wlan0 << EOF
+auto wlan0
+iface wlan0 inet static
+    address 192.168.4.1
+    netmask 255.255.255.0
+    network 192.168.4.0
+    broadcast 192.168.4.255
 EOF
 
-# Verify and copy configuration files
+# Copy configuration files
 check_file "wifi-ap-config/hostapd.conf"
 check_file "wifi-ap-config/dnsmasq.conf"
 cp wifi-ap-config/hostapd.conf /etc/hostapd/
@@ -53,13 +58,6 @@ cp wifi-ap-config/dnsmasq.conf /etc/dnsmasq.conf
 
 # Update hostapd configuration
 sed -i 's/^#DAEMON_CONF=""/DAEMON_CONF="\/etc\/hostapd\/hostapd.conf"/' /etc/default/hostapd
-
-# Set up dhcpcd service
-check_file "systemd/dhcpcd.service"
-cp systemd/dhcpcd.service /etc/systemd/system/
-systemctl daemon-reload
-systemctl enable dhcpcd
-systemctl start dhcpcd
 
 # Set up hostapd service
 check_file "systemd/hostapd.service"
