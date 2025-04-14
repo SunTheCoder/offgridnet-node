@@ -32,7 +32,7 @@ apt update && apt install -y python3 python3-pip python3-venv nginx hostapd dnsm
 check_status "Dependency installation"
 
 echo "[2/4] Setting up Wi-Fi config..."
-# Unblock WiFi if it's blocked by rfkill
+# Ensure WiFi is unblocked (needed for hosting access point)
 rfkill unblock wifi
 sleep 2
 
@@ -41,10 +41,10 @@ cat > /etc/default/crda << EOF
 REGDOMAIN=US
 EOF
 
-# Create a systemd service to unblock WiFi on boot
-cat > /etc/systemd/system/unblock-wifi.service << EOF
+# Create a systemd service to ensure WiFi is unblocked on boot
+cat > /etc/systemd/system/setup-wifi.service << EOF
 [Unit]
-Description=Unblock WiFi on boot
+Description=Setup WiFi for access point
 Before=hostapd.service
 
 [Service]
@@ -60,11 +60,11 @@ RemainAfterExit=yes
 WantedBy=multi-user.target
 EOF
 
-# Enable the unblock-wifi service
-systemctl enable unblock-wifi.service
-systemctl start unblock-wifi.service
+# Enable the setup-wifi service
+systemctl enable setup-wifi.service
+systemctl start setup-wifi.service
 
-# Stop any existing WiFi services
+# Stop and disable wpa_supplicant to prevent client functionality
 systemctl stop wpa_supplicant
 systemctl disable wpa_supplicant
 
@@ -157,11 +157,6 @@ cp "$PI_ZERO_DIR/../common/frontend/index.html" /var/www/html/
 
 echo "Setup complete! All services will start automatically on boot."
 echo "Access point will be available as 'OffGridNet' with password 'Datathug2024!'"
-
-# Just bring down the interface before reboot, but don't block it
-echo "Bringing down wireless interface..."
-ifconfig wlan0 down
-sleep 2
 
 echo "Rebooting in 5 seconds..."
 sleep 5 && reboot 
