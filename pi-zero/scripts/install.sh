@@ -36,6 +36,25 @@ echo "[2/4] Setting up Wi-Fi config..."
 rfkill unblock wifi
 sleep 2
 
+# Create a systemd service to unblock WiFi on boot
+cat > /etc/systemd/system/unblock-wifi.service << EOF
+[Unit]
+Description=Unblock WiFi on boot
+Before=hostapd.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/rfkill unblock wifi
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Enable the unblock-wifi service
+systemctl enable unblock-wifi.service
+systemctl start unblock-wifi.service
+
 # Stop any existing WiFi services
 systemctl stop wpa_supplicant
 systemctl disable wpa_supplicant
