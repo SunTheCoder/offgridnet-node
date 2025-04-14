@@ -36,6 +36,11 @@ echo "[2/4] Setting up Wi-Fi config..."
 rfkill unblock wifi
 sleep 2
 
+# Set country code for regulatory domain
+cat > /etc/default/crda << EOF
+REGDOMAIN=US
+EOF
+
 # Create a systemd service to unblock WiFi on boot
 cat > /etc/systemd/system/unblock-wifi.service << EOF
 [Unit]
@@ -45,6 +50,8 @@ Before=hostapd.service
 [Service]
 Type=oneshot
 ExecStart=/usr/sbin/rfkill unblock wifi
+ExecStart=/sbin/iw reg set US
+ExecStart=/sbin/iw dev wlan0 set power_save off
 RemainAfterExit=yes
 
 [Install]
@@ -84,6 +91,11 @@ cp "$PI_ZERO_DIR/wifi-ap-config/dnsmasq.conf" /etc/dnsmasq.conf
 
 # Update hostapd configuration
 sed -i 's/^#DAEMON_CONF=""/DAEMON_CONF="\/etc\/hostapd\/hostapd.conf"/' /etc/default/hostapd
+
+# Create hostapd PID directory and set permissions
+mkdir -p /run/hostapd
+chown root:root /run/hostapd
+chmod 755 /run/hostapd
 
 # Set up hostapd service
 check_file "$PI_ZERO_DIR/systemd/hostapd.service"
