@@ -44,6 +44,9 @@ systemctl disable wpa_supplicant
 systemctl stop dhcpcd
 systemctl disable dhcpcd
 
+# Create network interfaces directory if it doesn't exist
+mkdir -p /etc/network/interfaces.d
+
 # Set static IP for wlan0
 cat > /etc/network/interfaces.d/wlan0 << EOF
 auto wlan0
