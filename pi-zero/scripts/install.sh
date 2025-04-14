@@ -52,6 +52,8 @@ Type=oneshot
 ExecStart=/usr/sbin/rfkill unblock wifi
 ExecStart=/sbin/iw reg set US
 ExecStart=/sbin/iw dev wlan0 set power_save off
+ExecStart=/sbin/ip link set wlan0 up
+ExecStart=/sbin/ip addr add 192.168.4.1/24 dev wlan0
 RemainAfterExit=yes
 
 [Install]
@@ -155,5 +157,11 @@ cp "$PI_ZERO_DIR/../common/frontend/index.html" /var/www/html/
 
 echo "Setup complete! All services will start automatically on boot."
 echo "Access point will be available as 'OffGridNet' with password 'Datathug2024!'"
+
+# Just bring down the interface before reboot, but don't block it
+echo "Bringing down wireless interface..."
+ifconfig wlan0 down
+sleep 2
+
 echo "Rebooting in 5 seconds..."
 sleep 5 && reboot 
