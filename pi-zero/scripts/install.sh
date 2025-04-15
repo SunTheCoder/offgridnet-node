@@ -85,15 +85,17 @@ mkdir -p /run/hostapd
 chown root:root /run/hostapd
 chmod 755 /run/hostapd
 
-# Bring up the interface manually first
+# Bring up the interface properly
 echo "Bringing up wlan0 interface..."
-ifconfig wlan0 down
+ip link set wlan0 down
 sleep 2
-ifconfig wlan0 up
+ip link set wlan0 up
 sleep 2
-ifconfig wlan0 192.168.4.1 netmask 255.255.255.0
+ip addr flush dev wlan0
+ip addr add 192.168.4.1/24 broadcast 192.168.4.255 dev wlan0
 echo "Interface status:"
-ifconfig wlan0
+ip link show wlan0
+ip addr show wlan0
 
 # Set up hostapd service
 echo "Setting up hostapd service..."
