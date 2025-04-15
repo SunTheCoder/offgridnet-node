@@ -16,7 +16,7 @@ systemctl enable meshnode.service
 
 # Start services in correct order and check status
 echo "Starting services..."
-services=(
+declare -a services=(
     "set-wlan-ip.service"
     "hostapd.service"
     "dnsmasq.service"
