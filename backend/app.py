@@ -47,16 +47,18 @@ def kiwix_proxy(path=''):
     kiwix_url = f'http://localhost:8080/{path}'
     try:
         app.logger.info(f"Proxying request to Kiwix: {kiwix_url}")
-        response = requests.get(kiwix_url, timeout=10, allow_redirects=True)
+        response = requests.get(kiwix_url, timeout=10, allow_redirects=False)  # Don't follow redirects automatically
         
         # Log the response status and headers
         app.logger.info(f"Kiwix response status: {response.status_code}")
         app.logger.info(f"Kiwix response headers: {dict(response.headers)}")
         
-        # If it's a redirect, follow it
+        # If it's a redirect, modify it to stay within our network
         if response.status_code in (301, 302, 303, 307, 308):
             redirect_url = response.headers.get('Location', '')
-            app.logger.info(f"Kiwix redirect to: {redirect_url}")
+            # Replace localhost:8080 with our local IP
+            redirect_url = redirect_url.replace('http://localhost:8080', 'http://192.168.4.1/kiwix')
+            app.logger.info(f"Modified Kiwix redirect to: {redirect_url}")
             return redirect(redirect_url)
         
         # Get content type
