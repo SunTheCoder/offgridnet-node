@@ -6,8 +6,8 @@ Wants=hostapd.service dnsmasq.service
 Conflicts=nginx.service apache2.service
 
 [Service]
-User=root
-Group=root
+User=sunny
+Group=sunny
 WorkingDirectory=/home/sunny/offgridnet-node
 Environment=PATH=/home/sunny/offgridnet-node/backend/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ExecStart=/home/sunny/offgridnet-node/backend/venv/bin/python backend/app.py
@@ -18,7 +18,7 @@ StandardOutput=append:/var/log/offgridnet/flask.log
 StandardError=append:/var/log/offgridnet/flask-error.log
 Environment=FLASK_APP=backend/app.py
 Environment=FLASK_ENV=production
-Environment=FLASK_PORT=80
+Environment=FLASK_PORT=5000
 
 [Install]
 WantedBy=multi-user.target 

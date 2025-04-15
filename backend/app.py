@@ -120,16 +120,16 @@ def journal():
 @app.route('/journal')
 @app.route('/files')
 def serve_frontend():
-    return send_from_directory('/home/sunny/offgridnet-node/frontend', 'index.html')
+    return send_from_directory('../frontend', 'index.html')
 
 @app.route('/static/<path:path>')
 def serve_static(path):
-    return send_from_directory('/home/sunny/offgridnet-node/frontend/static', path)
+    return send_from_directory('../frontend/static', path)
 
 # Error handlers
 @app.errorhandler(404)
 def not_found_error(error):
-    return send_from_directory('/home/sunny/offgridnet-node/frontend', 'index.html'), 404
+    return send_from_directory('../frontend', 'index.html'), 404
 
 @app.errorhandler(500)
 def internal_error(error):
@@ -138,4 +138,4 @@ def internal_error(error):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(host='0.0.0.0', port=int(os.getenv('FLASK_PORT', 80))) 
+    app.run(host='0.0.0.0', port=int(os.getenv('FLASK_PORT', 5000))) 
