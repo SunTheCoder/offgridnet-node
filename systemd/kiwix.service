@@ -10,12 +10,15 @@ User=sunny
 Group=sunny
 WorkingDirectory=/home/sunny/kiwix
 Environment=KIWIX_DEBUG=1
-ExecStartPre=/bin/sleep 5
-ExecStart=/bin/bash -c '/usr/bin/kiwix-serve --library /home/sunny/kiwix/data/library.xml --port 8080 --daemon --address 0.0.0.0'
+# Wait for network and keep trying to start
+ExecStartPre=/bin/sleep 30
+ExecStart=/bin/bash -c 'while ! /usr/bin/kiwix-serve --library /home/sunny/kiwix/data/library.xml --port 8080 --daemon --address 0.0.0.0; do sleep 5; done'
+# If the service fails, try to restart it
 Restart=always
-RestartSec=10
-StartLimitInterval=30
-StartLimitBurst=5
+RestartSec=5
+# Try to restart many times
+StartLimitInterval=0
+StartLimitBurst=0
 StandardOutput=append:/var/log/offgridnet/kiwix.log
 StandardError=append:/var/log/offgridnet/kiwix-error.log
 
