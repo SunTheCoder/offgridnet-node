@@ -23,6 +23,7 @@ var/
 # Database
 *.db
 *.sqlite3
+*.zim
 
 # Environment variables
 .env
