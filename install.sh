@@ -11,7 +11,21 @@ chown -R sunny:sunny /var/www/html
 
 # Install Kiwix and dependencies
 echo "Installing Kiwix and dependencies..."
+apt update
 apt install -y kiwix-tools wget
+
+# Verify Kiwix installation
+echo "Verifying Kiwix installation..."
+if [ ! -f "/usr/bin/kiwix-serve" ]; then
+    echo "Error: kiwix-serve not found at /usr/bin/kiwix-serve"
+    echo "Trying to find kiwix-serve..."
+    find / -name kiwix-serve 2>/dev/null
+    exit 1
+fi
+
+# Allow port 8080 through firewall
+echo "Configuring firewall..."
+ufw allow 8080/tcp
 
 # Download ZIM file from Kiwix
 echo "Downloading ZIM file..."
