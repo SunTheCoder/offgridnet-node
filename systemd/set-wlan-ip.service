@@ -1,0 +1,21 @@
+[Unit]
+Description=Configure wireless interface and assign static IP for OffGridNet
+Before=hostapd.service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# Unblock WiFi and configure interface
+ExecStart=/bin/bash -c 'rfkill unblock wifi'
+ExecStart=/bin/bash -c 'ip link set wlan0 down'
+ExecStart=/bin/bash -c 'ip link set wlan0 up'
+ExecStart=/bin/bash -c 'iw dev wlan0 set type __ap'
+ExecStart=/bin/bash -c 'iw reg set US'
+ExecStart=/bin/bash -c 'iwconfig wlan0 power off'
+# Wait and assign IP
+ExecStart=/bin/bash -c "/bin/sleep 10 && /sbin/ip addr add 192.168.4.1/24 dev wlan0"
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target 
