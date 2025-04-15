@@ -6,11 +6,16 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
+# Stop any conflicting services
+ExecStart=/bin/bash -c 'systemctl stop wpa_supplicant'
+ExecStart=/bin/bash -c 'systemctl disable wpa_supplicant'
 # Unblock WiFi and configure interface
 ExecStart=/bin/bash -c 'rfkill unblock wifi'
 ExecStart=/bin/bash -c 'ip link set wlan0 down'
+ExecStart=/bin/bash -c 'sleep 2'
+ExecStart=/bin/bash -c 'iw dev wlan0 set type __ap || true'
+ExecStart=/bin/bash -c 'sleep 2'
 ExecStart=/bin/bash -c 'ip link set wlan0 up'
-ExecStart=/bin/bash -c 'iw dev wlan0 set type __ap'
 ExecStart=/bin/bash -c 'iw reg set US'
 ExecStart=/bin/bash -c 'iw wlan0 set power_save off'
 # Wait and assign IP
