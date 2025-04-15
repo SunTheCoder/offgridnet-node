@@ -1,19 +1,17 @@
 # OffGridNet Node
 
-A complete offline mesh system for Raspberry Pi 5, serving HTML, Flask, Kiwix, and acting as a Wi-Fi access point.
+A complete offline mesh system for Raspberry Pi, serving as a Wi-Fi access point with local services.
 
 ## Features
 
 - 📡 Wi-Fi Access Point with SSID "OffGridNet"
 - 🌐 Flask backend for local services
-- 📘 Kiwix server for offline Wikipedia
 - 📝 Local journal system
-- 📂 File sharing capabilities
 - 🔒 Secure authentication
 
 ## Prerequisites
 
-- Raspberry Pi 5
+- Raspberry Pi (Tested on Pi Zero and Pi 5)
 - Raspberry Pi OS (64-bit)
 - Internet connection for initial setup
 - MicroSD card (16GB or larger recommended)
@@ -28,20 +26,18 @@ A complete offline mesh system for Raspberry Pi 5, serving HTML, Flask, Kiwix, a
 
 2. Make the install script executable:
    ```bash
-   chmod +x scripts/install.sh
+   chmod +x install.sh
    ```
 
 3. Run the installation script as root:
    ```bash
-   sudo ./scripts/install.sh
+   sudo ./install.sh
    ```
 
 The script will:
 - Install all necessary dependencies
 - Configure the Wi-Fi access point
 - Set up the Flask backend
-- Enable Kiwix server
-- Deploy the frontend
 - Reboot the system
 
 ## Network Configuration
@@ -53,16 +49,18 @@ The script will:
 
 ## Services
 
+### Core Services
+1. `set-wlan-ip.service`: Configures wireless interface and assigns static IP
+2. `hostapd.service`: Manages the Wi-Fi access point
+3. `dnsmasq.service`: Provides DHCP services
+4. `offgridnet.service`: Runs the Flask backend
+
 ### Flask Backend
 - Port: 5000
 - Features:
   - User authentication
   - Journal system
   - File sharing
-
-### Kiwix Server
-- Port: 8080
-- Access: http://192.168.4.1:8080
 
 ### Web Interface
 - Access: http://192.168.4.1
@@ -78,33 +76,30 @@ The script will:
 # Flask backend
 sudo systemctl start/stop/restart offgridnet.service
 
-# Kiwix server
-sudo systemctl start/stop/restart kiwix.service
-
 # Wi-Fi access point
 sudo systemctl start/stop/restart hostapd
 ```
 
 ### Checking Service Status
 ```bash
+# Check wireless interface
+iw dev wlan0 info
+
+# Check service status
 sudo systemctl status offgridnet.service
-sudo systemctl status kiwix.service
 sudo systemctl status hostapd
 ```
 
 ## Troubleshooting
 
 1. **Wi-Fi not working**
-   - Check if hostapd is running: `sudo systemctl status hostapd`
-   - Verify configuration: `sudo cat /etc/hostapd/hostapd.conf`
+   - Check interface mode: `iw dev wlan0 info` (should show `type AP`)
+   - Check hostapd status: `sudo systemctl status hostapd`
+   - Check hostapd logs: `sudo journalctl -u hostapd`
 
 2. **Flask backend issues**
    - Check logs: `sudo journalctl -u offgridnet.service`
    - Verify database: `ls -l backend/offgridnet.db`
-
-3. **Kiwix not accessible**
-   - Check if service is running: `sudo systemctl status kiwix.service`
-   - Verify library file exists: `ls -l /home/sunny/kiwix/data/library.xml`
 
 ## Contributing
 
