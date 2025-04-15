@@ -50,75 +50,48 @@ sleep 2
 echo "WiFi status after unblocking:"
 rfkill list
 
-echo "Setting regulatory domain..."
-cat > /etc/default/crda << EOF
-REGDOMAIN=US
-EOF
-
-echo "Creating setup-wifi service..."
-cat > /etc/systemd/system/setup-wifi.service << EOF
-[Unit]
-Description=Setup WiFi for access point
-Before=hostapd.service
-
-[Service]
-Type=oneshot
-ExecStart=/usr/sbin/rfkill unblock wifi
-ExecStart=/sbin/iw reg set US
-ExecStart=/sbin/iw dev wlan0 set power_save off
-ExecStart=/sbin/ip link set wlan0 up
-ExecStart=/sbin/ip addr add 192.168.4.1/24 dev wlan0
-RemainAfterExit=yes
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-echo "Enabling setup-wifi service..."
-systemctl enable setup-wifi.service
-systemctl start setup-wifi.service
-echo "setup-wifi service status:"
-systemctl status setup-wifi.service
-
-echo "Disabling wpa_supplicant..."
+# Stop any existing WiFi services
+echo "Stopping existing WiFi services..."
 systemctl stop wpa_supplicant
 systemctl disable wpa_supplicant
 echo "wpa_supplicant status:"
 systemctl status wpa_supplicant
 
+# Disable dhcpcd
 echo "Disabling dhcpcd..."
 systemctl stop dhcpcd
 systemctl disable dhcpcd
 echo "dhcpcd status:"
 systemctl status dhcpcd
 
-echo "Creating network interfaces directory..."
-mkdir -p /etc/network/interfaces.d
+# Configure static IP for wlan0
+echo "Configuring static IP..."
+cat >> /etc/dhcpcd.conf << EOF
 
-echo "Setting static IP for wlan0..."
-cat > /etc/network/interfaces.d/wlan0 << EOF
-auto wlan0
-iface wlan0 inet static
-    address 192.168.4.1
-    netmask 255.255.255.0
-    network 192.168.4.0
-    broadcast 192.168.4.255
+# OffGridNet Access Point Configuration
+interface wlan0
+    static ip_address=192.168.4.1/24
+    nohook wpa_supplicant
 EOF
 
+# Copy configuration files
 echo "Copying configuration files..."
 check_file "$PI_ZERO_DIR/wifi-ap-config/hostapd.conf"
 check_file "$PI_ZERO_DIR/wifi-ap-config/dnsmasq.conf"
 cp "$PI_ZERO_DIR/wifi-ap-config/hostapd.conf" /etc/hostapd/
 cp "$PI_ZERO_DIR/wifi-ap-config/dnsmasq.conf" /etc/dnsmasq.conf
 
+# Update hostapd configuration
 echo "Updating hostapd configuration..."
 sed -i 's/^#DAEMON_CONF=""/DAEMON_CONF="\/etc\/hostapd\/hostapd.conf"/' /etc/default/hostapd
 
+# Create hostapd PID directory
 echo "Creating hostapd PID directory..."
 mkdir -p /run/hostapd
 chown root:root /run/hostapd
 chmod 755 /run/hostapd
 
+# Set up hostapd service
 echo "Setting up hostapd service..."
 check_file "$PI_ZERO_DIR/systemd/hostapd.service"
 cp "$PI_ZERO_DIR/systemd/hostapd.service" /etc/systemd/system/
@@ -131,6 +104,7 @@ systemctl start hostapd
 echo "hostapd service status:"
 systemctl status hostapd
 
+# Enable dnsmasq
 echo "Setting up dnsmasq..."
 systemctl enable dnsmasq
 systemctl stop dnsmasq
@@ -196,7 +170,7 @@ cp "$PI_ZERO_DIR/../common/frontend/index.html" /var/www/html/
 
 echo "=== Final System Status ==="
 echo "All services status:"
-systemctl status setup-wifi.service hostapd.service dnsmasq.service offgridnet.service kiwix.service
+systemctl status hostapd.service dnsmasq.service offgridnet.service kiwix.service
 
 echo "Network interfaces:"
 ip a
