@@ -8,7 +8,7 @@ Group=sunny
 WorkingDirectory=/home/sunny/kiwix
 Environment=KIWIX_DEBUG=1
 # Simple command to start Kiwix
-ExecStart=/usr/bin/kiwix-serve --library /home/sunny/kiwix/data/library.xml --port 8080 --daemon --address 0.0.0.0
+ExecStart=/usr/bin/kiwix-serve --library /home/sunny/kiwix/data/library.xml --port 8080 --address 0.0.0.0
 # Restart if it fails
 Restart=always
 RestartSec=5
