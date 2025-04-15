@@ -10,12 +10,14 @@ User=sunny
 Group=sunny
 WorkingDirectory=/home/sunny/kiwix
 Environment=KIWIX_DEBUG=1
-# Wait for network and keep trying to start
-ExecStartPre=/bin/sleep 30
-ExecStart=/bin/bash -c 'while ! /usr/bin/kiwix-serve --library /home/sunny/kiwix/data/library.xml --port 8080 --daemon --address 0.0.0.0; do sleep 5; done'
+# Wait for network and services to be fully ready
+ExecStartPre=/bin/sleep 60
+ExecStartPre=/bin/bash -c 'until systemctl is-active --quiet hostapd.service && systemctl is-active --quiet dnsmasq.service && ping -c 1 192.168.4.1; do sleep 5; done'
+# Check network before each start attempt
+ExecStart=/bin/bash -c 'if systemctl is-active --quiet hostapd.service && systemctl is-active --quiet dnsmasq.service && ping -c 1 192.168.4.1; then /usr/bin/kiwix-serve --library /home/sunny/kiwix/data/library.xml --port 8080 --daemon --address 0.0.0.0; else exit 1; fi'
 # If the service fails, try to restart it
 Restart=always
-RestartSec=5
+RestartSec=10
 # Try to restart many times
 StartLimitInterval=0
 StartLimitBurst=0
