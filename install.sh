@@ -4,7 +4,7 @@ cp systemd/hostapd.service /etc/systemd/system/
 cp systemd/dnsmasq.service /etc/systemd/system/
 # cp systemd/kiwix.service /etc/systemd/system/
 cp systemd/set-wlan-ip.service /etc/systemd/system/
-cp systemd/meshnode.service /etc/systemd/system/
+cp systemd/offgridnet.service /etc/systemd/system/
 
 # Enable and start services in correct order
 echo "Enabling and starting services..."
@@ -12,7 +12,7 @@ systemctl enable set-wlan-ip.service
 systemctl enable hostapd.service
 systemctl enable dnsmasq.service
 # systemctl enable kiwix.service
-systemctl enable meshnode.service
+systemctl enable offgridnet.service
 
 # Start services in correct order and check status
 echo "Starting services..."
@@ -38,7 +38,7 @@ start_service "set-wlan-ip.service"
 start_service "hostapd.service"
 start_service "dnsmasq.service"
 # start_service "kiwix.service"
-start_service "meshnode.service"
+start_service "offgridnet.service"
 
 echo "All services started successfully"
 
