@@ -119,8 +119,20 @@ check_status "Library creation"
 # Copy and enable Kiwix service
 cp systemd/kiwix.service /etc/systemd/system/
 chmod 644 /etc/systemd/system/kiwix.service
+systemctl daemon-reload
 systemctl enable kiwix.service
 start_service "kiwix.service"
+
+# Create a startup script to ensure Kiwix starts after network is up
+cat > /etc/network/if-up.d/start-kiwix << 'EOF'
+#!/bin/sh
+if [ "$IFACE" = "wlan0" ]; then
+    sleep 5
+    systemctl start kiwix.service
+fi
+EOF
+
+chmod +x /etc/network/if-up.d/start-kiwix
 
 echo "All services started successfully"
 echo "Access Kiwix at http://192.168.4.1:8080" 
