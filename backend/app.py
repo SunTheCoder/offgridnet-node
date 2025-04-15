@@ -5,14 +5,39 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
+import shutil
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
 
-# Get the absolute path to the frontend directory in the repository
+# Define paths
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-FRONTEND_DIR = os.path.join(REPO_ROOT, 'frontend')
+REPO_FRONTEND = os.path.join(REPO_ROOT, 'frontend')
+WEB_ROOT = '/var/www/html'
+
+def sync_frontend_files():
+    """Copy frontend files from repo to web root"""
+    try:
+        # Create web root if it doesn't exist
+        os.makedirs(WEB_ROOT, exist_ok=True)
+        
+        # Copy index.html
+        shutil.copy2(
+            os.path.join(REPO_FRONTEND, 'index.html'),
+            os.path.join(WEB_ROOT, 'index.html')
+        )
+        
+        # Copy static directory
+        static_src = os.path.join(REPO_FRONTEND, 'static')
+        static_dst = os.path.join(WEB_ROOT, 'static')
+        if os.path.exists(static_dst):
+            shutil.rmtree(static_dst)
+        shutil.copytree(static_src, static_dst)
+        
+        print(f"Synced frontend files from {REPO_FRONTEND} to {WEB_ROOT}")
+    except Exception as e:
+        print(f"Error syncing frontend files: {e}")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY')
@@ -46,13 +71,11 @@ def load_user(user_id):
 # Routes
 @app.route('/')
 def serve_frontend():
-    print(f"Serving index.html from: {FRONTEND_DIR}")  # Debug log
-    return send_from_directory(FRONTEND_DIR, 'index.html')
+    return send_from_directory(WEB_ROOT, 'index.html')
 
 @app.route('/static/<path:path>')
 def serve_static(path):
-    print(f"Serving static file from: {os.path.join(FRONTEND_DIR, 'static')}")  # Debug log
-    return send_from_directory(os.path.join(FRONTEND_DIR, 'static'), path)
+    return send_from_directory(os.path.join(WEB_ROOT, 'static'), path)
 
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -90,4 +113,6 @@ def journal():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+        # Sync frontend files on startup
+        sync_frontend_files()
     app.run(host='0.0.0.0', port=int(os.getenv('FLASK_PORT', 5000))) 
