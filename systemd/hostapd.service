@@ -1,7 +1,7 @@
 [Unit]
 Description=Hostapd IEEE 802.11 AP and IEEE 802.1X/WPA/WPA2/EAP Authenticator
-After=network.target dhcpcd.service
-Wants=network.target dhcpcd.service
+After=network.target set-wlan-io.service
+Wants=network.target set-wlan-io.service
 
 [Service]
 Type=forking
@@ -10,6 +10,8 @@ ExecStart=/usr/sbin/hostapd -B -P /run/hostapd.pid /etc/hostapd/hostapd.conf
 ExecStop=/bin/kill -TERM $MAINPID
 Restart=always
 RestartSec=10
+StandardOutput=append:/var/log/offgridnet/hostapd.log
+StandardError=append:/var/log/offgridnet/hostapd-error.log
 
 [Install]
 WantedBy=multi-user.target 
