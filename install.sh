@@ -97,12 +97,30 @@ start_service "hostapd.service"
 start_service "dnsmasq.service"
 start_service "offgridnet.service"
 
-echo "All services started successfully"
+echo "Setting up Kiwix..."
+# Install kiwix-tools
+apt install -y kiwix-tools
+check_status "Kiwix installation"
 
-# Kiwix setup can be done later
-echo "Note: Kiwix setup can be done later with:"
-echo "1. Install kiwix-tools: sudo apt install kiwix-tools"
-echo "2. Create directories: sudo mkdir -p /home/sunny/kiwix/data"
-echo "3. Set permissions: sudo chown -R sunny:sunny /home/sunny/kiwix"
-echo "4. Enable service: sudo systemctl enable kiwix.service"
-echo "5. Start service: sudo systemctl start kiwix.service" 
+# Create Kiwix directory and set permissions
+mkdir -p /home/sunny/kiwix/data
+chown -R sunny:sunny /home/sunny/kiwix
+chmod 755 /home/sunny/kiwix
+
+# Download Simple English Wikipedia ZIM file
+echo "Downloading Simple English Wikipedia ZIM file..."
+su - sunny -c "cd /home/sunny/kiwix/data && wget https://download.kiwix.org/zim/wikipedia/wikipedia_en_simple_all_nopic_2024-06.zim"
+check_status "ZIM file download"
+
+# Create library.xml
+su - sunny -c "cd /home/sunny/kiwix/data && kiwix-manage library.xml add wikipedia_en_simple_all_nopic_2024-06.zim"
+check_status "Library creation"
+
+# Copy and enable Kiwix service
+cp systemd/kiwix.service /etc/systemd/system/
+chmod 644 /etc/systemd/system/kiwix.service
+systemctl enable kiwix.service
+start_service "kiwix.service"
+
+echo "All services started successfully"
+echo "Access Kiwix at http://192.168.4.1:8080" 
