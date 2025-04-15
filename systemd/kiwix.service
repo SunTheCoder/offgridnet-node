@@ -11,9 +11,11 @@ Group=sunny
 WorkingDirectory=/home/sunny/kiwix
 Environment=KIWIX_DEBUG=1
 ExecStartPre=/bin/sleep 5
-ExecStart=/usr/bin/kiwix-serve --library /home/sunny/kiwix/data/library.xml --port 8080 --daemon --address 0.0.0.0
+ExecStart=/bin/bash -c '/usr/bin/kiwix-serve --library /home/sunny/kiwix/data/library.xml --port 8080 --daemon --address 0.0.0.0'
 Restart=always
 RestartSec=10
+StartLimitInterval=30
+StartLimitBurst=5
 StandardOutput=append:/var/log/offgridnet/kiwix.log
 StandardError=append:/var/log/offgridnet/kiwix-error.log
 
