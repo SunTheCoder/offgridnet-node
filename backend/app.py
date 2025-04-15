@@ -120,16 +120,16 @@ def journal():
 @app.route('/journal')
 @app.route('/files')
 def serve_frontend():
-    return send_from_directory('../frontend', 'index.html')
+    return send_from_directory('/home/sunny/offgridnet-node/frontend', 'index.html')
 
 @app.route('/static/<path:path>')
 def serve_static(path):
-    return send_from_directory('../frontend/static', path)
+    return send_from_directory('/home/sunny/offgridnet-node/frontend/static', path)
 
 # Error handlers
 @app.errorhandler(404)
 def not_found_error(error):
-    return send_from_directory('../frontend', 'index.html'), 404
+    return send_from_directory('/home/sunny/offgridnet-node/frontend', 'index.html'), 404
 
 @app.errorhandler(500)
 def internal_error(error):
