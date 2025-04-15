@@ -107,18 +107,18 @@ mkdir -p /home/sunny/kiwix/data
 chown -R sunny:sunny /home/sunny/kiwix
 chmod 755 /home/sunny/kiwix
 
-# Download a smaller ZIM file for testing (Wikivoyage)
-echo "Downloading Wikivoyage ZIM file (smaller test file)..."
-su - sunny -c "cd /home/sunny/kiwix/data && wget --no-check-certificate https://download.kiwix.org/zim/wikivoyage/wikivoyage_en_all_nopic_2024-06.zim"
+# Download Nollywood Wikipedia ZIM file
+echo "Downloading Nollywood Wikipedia ZIM file..."
+su - sunny -c "cd /home/sunny/kiwix/data && wget --no-check-certificate https://download.kiwix.org/zim/wikipedia/wikipedia_en_nollywood_maxi_2025-04.zim"
 check_status "ZIM file download"
 
 # Verify ZIM file exists and has content
-if [ ! -f "/home/sunny/kiwix/data/wikivoyage_en_all_nopic_2024-06.zim" ]; then
+if [ ! -f "/home/sunny/kiwix/data/wikipedia_en_nollywood_maxi_2025-04.zim" ]; then
     echo "Error: ZIM file download failed - file not found"
     exit 1
 fi
 
-ZIM_SIZE=$(stat -c%s "/home/sunny/kiwix/data/wikivoyage_en_all_nopic_2024-06.zim")
+ZIM_SIZE=$(stat -c%s "/home/sunny/kiwix/data/wikipedia_en_nollywood_maxi_2025-04.zim")
 if [ "$ZIM_SIZE" -lt 1000000 ]; then
     echo "Error: ZIM file appears to be too small or corrupted"
     exit 1
@@ -126,7 +126,7 @@ fi
 
 # Create library.xml
 echo "Creating Kiwix library..."
-su - sunny -c "cd /home/sunny/kiwix/data && kiwix-manage library.xml add wikivoyage_en_all_nopic_2024-06.zim"
+su - sunny -c "cd /home/sunny/kiwix/data && kiwix-manage library.xml add wikipedia_en_nollywood_maxi_2025-04.zim"
 check_status "Library creation"
 
 # Verify library.xml exists
@@ -161,8 +161,8 @@ chmod +x /etc/network/if-up.d/start-kiwix
 
 # Add debugging information
 echo "Kiwix setup complete. Debug information:"
-echo "ZIM file location: /home/sunny/kiwix/data/wikivoyage_en_all_nopic_2024-06.zim"
-echo "ZIM file size: $(du -h /home/sunny/kiwix/data/wikivoyage_en_all_nopic_2024-06.zim | cut -f1)"
+echo "ZIM file location: /home/sunny/kiwix/data/wikipedia_en_nollywood_maxi_2025-04.zim"
+echo "ZIM file size: $(du -h /home/sunny/kiwix/data/wikipedia_en_nollywood_maxi_2025-04.zim | cut -f1)"
 echo "Library file: /home/sunny/kiwix/data/library.xml"
 echo "Service status:"
 systemctl status kiwix.service
