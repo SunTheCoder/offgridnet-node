@@ -87,11 +87,9 @@ echo "[4/4] Setting up Kiwix..."
 mkdir -p /home/sunny/kiwix/data
 chown -R sunny:sunny /home/sunny/kiwix
 
+# Copy and enable service
 cp systemd/kiwix.service /etc/systemd/system/
 systemctl enable kiwix.service
-
-# Deploy frontend
-cp frontend/index.html /var/www/html/index.html
 
 echo "Setup complete! All services will start automatically on boot."
 echo "Access point will be available as 'OffGridNet' with password 'Datathug2024!'"
