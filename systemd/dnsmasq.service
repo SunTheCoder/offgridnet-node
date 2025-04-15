@@ -1,0 +1,13 @@
+[Unit]
+Description=DNS and DHCP server for OffGridNet
+After=network-online.target hostapd.service
+Wants=network-online.target hostapd.service
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/dnsmasq -k
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target 
