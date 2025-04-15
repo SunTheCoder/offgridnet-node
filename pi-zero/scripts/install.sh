@@ -59,12 +59,13 @@ systemctl status dhcpcd
 
 # Configure static IP for wlan0
 echo "Configuring static IP..."
-cat >> /etc/dhcpcd.conf << EOF
-
-# OffGridNet Access Point Configuration
-interface wlan0
-    static ip_address=192.168.4.1/24
-    nohook wpa_supplicant
+cat > /etc/network/interfaces.d/wlan0 << EOF
+auto wlan0
+iface wlan0 inet static
+    address 192.168.4.1
+    netmask 255.255.255.0
+    network 192.168.4.0
+    broadcast 192.168.4.255
 EOF
 
 # Copy configuration files
@@ -83,6 +84,16 @@ echo "Creating hostapd PID directory..."
 mkdir -p /run/hostapd
 chown root:root /run/hostapd
 chmod 755 /run/hostapd
+
+# Bring up the interface manually first
+echo "Bringing up wlan0 interface..."
+ifconfig wlan0 down
+sleep 2
+ifconfig wlan0 up
+sleep 2
+ifconfig wlan0 192.168.4.1 netmask 255.255.255.0
+echo "Interface status:"
+ifconfig wlan0
 
 # Set up hostapd service
 echo "Setting up hostapd service..."
