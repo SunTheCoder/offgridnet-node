@@ -47,20 +47,33 @@ def kiwix_proxy(path=''):
     kiwix_url = f'http://localhost:8080/{path}'
     try:
         app.logger.info(f"Proxying request to Kiwix: {kiwix_url}")
-        response = requests.get(kiwix_url, timeout=10)
+        response = requests.get(kiwix_url, timeout=10, allow_redirects=True)
         
-        # Log the response status
+        # Log the response status and headers
         app.logger.info(f"Kiwix response status: {response.status_code}")
+        app.logger.info(f"Kiwix response headers: {dict(response.headers)}")
         
-        # Preserve content type and other headers
-        headers = dict(response.headers)
-        
-        # If it's a redirect, handle it
+        # If it's a redirect, follow it
         if response.status_code in (301, 302, 303, 307, 308):
             redirect_url = response.headers.get('Location', '')
             app.logger.info(f"Kiwix redirect to: {redirect_url}")
             return redirect(redirect_url)
-            
+        
+        # Get content type
+        content_type = response.headers.get('Content-Type', 'text/html')
+        
+        # Create response with proper headers
+        headers = {
+            'Content-Type': content_type,
+            'Cache-Control': 'no-cache',
+            'Access-Control-Allow-Origin': '*'
+        }
+        
+        # Add any other headers from the original response
+        for key, value in response.headers.items():
+            if key.lower() not in ['content-length', 'content-encoding', 'transfer-encoding']:
+                headers[key] = value
+        
         return response.content, response.status_code, headers
     except requests.RequestException as e:
         app.logger.error(f"Kiwix proxy error: {str(e)}")
@@ -74,6 +87,35 @@ def kiwix_proxy(path=''):
             'error': 'Internal server error',
             'details': str(e)
         }), 500
+
+# Add specific routes for Kiwix content
+@app.route('/content/<path:path>')
+def kiwix_content(path):
+    return kiwix_proxy(f'content/{path}')
+
+@app.route('/viewer/<path:path>')
+def kiwix_viewer(path):
+    return kiwix_proxy(f'viewer/{path}')
+
+@app.route('/search')
+def kiwix_search():
+    return kiwix_proxy('search')
+
+@app.route('/suggest')
+def kiwix_suggest():
+    return kiwix_proxy('suggest')
+
+@app.route('/catalog/<path:path>')
+def kiwix_catalog(path):
+    return kiwix_proxy(f'catalog/{path}')
+
+@app.route('/raw/<path:path>')
+def kiwix_raw(path):
+    return kiwix_proxy(f'raw/{path}')
+
+@app.route('/skin/<path:path>')
+def kiwix_skin(path):
+    return kiwix_proxy(f'skin/{path}')
 
 # Routes
 @app.route('/api/login', methods=['POST'])

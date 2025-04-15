@@ -107,15 +107,25 @@
     <script>
         // Check Kiwix service status
         document.getElementById('kiwix-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Show loading state
+            const link = this;
+            const originalText = link.textContent;
+            link.textContent = 'Loading...';
+            
+            // Check if the service is available
             fetch('/kiwix')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Kiwix service not available');
                     }
-                    // If response is ok, let the link work normally
+                    // If service is available, open in a new window
+                    window.open('/kiwix', '_blank');
+                    link.textContent = originalText;
                 })
                 .catch(error => {
-                    e.preventDefault();
+                    link.textContent = originalText;
                     alert('Kiwix service is not available. Please check the service status.');
                     console.error('Kiwix error:', error);
                 });
