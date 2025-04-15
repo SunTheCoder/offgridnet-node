@@ -16,7 +16,7 @@ check_status() {
 
 echo "[1/4] Installing dependencies..."
 # Install required packages
-apt update && apt install -y python3 python3-pip python3-venv nginx hostapd dnsmasq git unzip
+apt update && apt install -y python3 python3-pip python3-venv hostapd dnsmasq git unzip
 check_status "Dependency installation"
 
 echo "[2/4] Setting up Wi-Fi config..."
