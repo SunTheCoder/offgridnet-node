@@ -151,6 +151,26 @@ def journal():
         'timestamp': entry.timestamp.isoformat()
     } for entry in entries])
 
+# Add frontend serving routes
+@app.route('/')
+@app.route('/journal')
+@app.route('/files')
+def serve_frontend():
+    return send_from_directory('../frontend', 'index.html')
+
+@app.route('/static/<path:path>')
+def serve_static(path):
+    return send_from_directory('../frontend/static', path)
+
+# Error handlers
+@app.errorhandler(404)
+def not_found_error(error):
+    return send_from_directory('../frontend', 'index.html'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    return jsonify({'error': 'Internal server error'}), 500
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
