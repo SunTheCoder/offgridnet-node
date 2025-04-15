@@ -10,7 +10,11 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-app = Flask(__name__, static_folder='../frontend')
+# Get the absolute path to the frontend directory in the repository
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+FRONTEND_DIR = os.path.join(REPO_ROOT, 'frontend')
+
+app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///offgridnet.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -42,11 +46,13 @@ def load_user(user_id):
 # Routes
 @app.route('/')
 def serve_frontend():
-    return send_from_directory('../frontend', 'index.html')
+    print(f"Serving index.html from: {FRONTEND_DIR}")  # Debug log
+    return send_from_directory(FRONTEND_DIR, 'index.html')
 
 @app.route('/static/<path:path>')
 def serve_static(path):
-    return send_from_directory('../frontend/static', path)
+    print(f"Serving static file from: {os.path.join(FRONTEND_DIR, 'static')}")  # Debug log
+    return send_from_directory(os.path.join(FRONTEND_DIR, 'static'), path)
 
 @app.route('/api/login', methods=['POST'])
 def login():
