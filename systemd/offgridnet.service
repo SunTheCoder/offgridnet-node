@@ -3,6 +3,7 @@ Description=OffGridNet Flask Backend
 After=network.target hostapd.service dnsmasq.service
 Requires=network.target
 Wants=hostapd.service dnsmasq.service
+Conflicts=nginx.service apache2.service
 
 [Service]
 User=root
