@@ -50,13 +50,6 @@ sleep 2
 echo "WiFi status after unblocking:"
 rfkill list
 
-# Stop any existing WiFi services
-echo "Stopping existing WiFi services..."
-systemctl stop wpa_supplicant
-systemctl disable wpa_supplicant
-echo "wpa_supplicant status:"
-systemctl status wpa_supplicant
-
 # Disable dhcpcd
 echo "Disabling dhcpcd..."
 systemctl stop dhcpcd
