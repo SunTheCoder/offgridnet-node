@@ -1,6 +1,7 @@
 [Unit]
 Description=Kiwix Server
-After=network.target hostapd.service dnsmasq.service
+After=network.target network-online.target hostapd.service dnsmasq.service
+Wants=network-online.target
 Requires=network.target
 Wants=hostapd.service dnsmasq.service
 
@@ -9,6 +10,7 @@ User=sunny
 Group=sunny
 WorkingDirectory=/home/sunny/kiwix
 Environment=KIWIX_DEBUG=1
+ExecStartPre=/bin/sleep 5
 ExecStart=/usr/bin/kiwix-serve --library /home/sunny/kiwix/data/library.xml --port 8080 --daemon --address 0.0.0.0
 Restart=always
 RestartSec=10
