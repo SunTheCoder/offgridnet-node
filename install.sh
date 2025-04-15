@@ -107,6 +107,10 @@ mkdir -p /home/sunny/kiwix/data
 chown -R sunny:sunny /home/sunny/kiwix
 chmod 755 /home/sunny/kiwix
 
+# Stop any existing Kiwix process
+pkill kiwix-serve || true
+sleep 2
+
 # Download Nollywood Wikipedia ZIM file
 echo "Downloading Nollywood Wikipedia ZIM file..."
 su - sunny -c "cd /home/sunny/kiwix/data && wget --no-check-certificate https://download.kiwix.org/zim/wikipedia/wikipedia_en_nollywood_maxi_2025-04.zim"
@@ -140,10 +144,6 @@ cp systemd/kiwix.service /etc/systemd/system/
 chmod 644 /etc/systemd/system/kiwix.service
 systemctl daemon-reload
 systemctl enable kiwix.service
-
-# Stop any existing Kiwix process
-pkill kiwix-serve || true
-sleep 2
 
 # Start Kiwix service
 start_service "kiwix.service"

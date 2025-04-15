@@ -13,7 +13,7 @@ Restart=always
 RestartSec=10
 StandardOutput=append:/var/log/offgridnet/kiwix.log
 StandardError=append:/var/log/offgridnet/kiwix-error.log
-Environment=KIWIX_SERVE_OPTIONS="--library /home/sunny/kiwix/data/library.xml --port 8080 --daemon --address 0.0.0.0"
+Environment=PYTHONUNBUFFERED=1
 
 [Install]
 WantedBy=multi-user.target 
