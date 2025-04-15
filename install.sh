@@ -9,14 +9,15 @@ chown -R sunny:sunny /var/log/offgridnet
 chown -R sunny:sunny /home/sunny/kiwix
 chown -R sunny:sunny /var/www/html
 
-# Install Kiwix
-echo "Installing Kiwix..."
-apt install -y kiwix-tools
+# Install Kiwix and dependencies
+echo "Installing Kiwix and dependencies..."
+apt install -y kiwix-tools wget
 
-# Copy ZIM file to Kiwix data directory
-echo "Setting up ZIM file..."
-cp wikipedia_en_nollywood_maxi_2025-04.zim /home/sunny/kiwix/data/
-chown sunny:sunny /home/sunny/kiwix/data/wikipedia_en_nollywood_maxi_2025-04.zim
+# Download ZIM file from Kiwix
+echo "Downloading ZIM file..."
+cd /home/sunny/kiwix/data
+wget https://download.kiwix.org/zim/wikipedia/wikipedia_en_nollywood_maxi_2025-04.zim
+chown sunny:sunny wikipedia_en_nollywood_maxi_2025-04.zim
 
 # Generate library.xml
 echo "Generating Kiwix library..."
