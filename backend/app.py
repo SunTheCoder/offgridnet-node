@@ -46,22 +46,13 @@ def load_user(user_id):
 def kiwix_proxy(path=''):
     try:
         # Construct the full URL to Kiwix
-        kiwix_url = f'http://localhost:8080/{path}'
+        kiwix_url = f'http://192.168.4.1:8080/{path}'
         app.logger.info(f"Proxying request to Kiwix: {kiwix_url}")
         
         # Make the request to Kiwix
-        response = requests.get(kiwix_url, timeout=10, allow_redirects=False)
+        response = requests.get(kiwix_url, timeout=10)
         
-        # If it's a redirect, modify it to stay within our network
-        if response.status_code in (301, 302, 303, 307, 308):
-            redirect_url = response.headers.get('Location', '')
-            # Replace any localhost references with our proxy path
-            redirect_url = redirect_url.replace('http://localhost:8080', '/kiwix')
-            redirect_url = redirect_url.replace('localhost:8080', '/kiwix')
-            app.logger.info(f"Modified Kiwix redirect to: {redirect_url}")
-            return redirect(redirect_url)
-        
-        # Get content type and handle different types appropriately
+        # Get content type
         content_type = response.headers.get('Content-Type', 'text/html')
         
         # Create response with proper headers
@@ -76,17 +67,7 @@ def kiwix_proxy(path=''):
             if key.lower() not in ['content-length', 'content-encoding', 'transfer-encoding']:
                 headers[key] = value
         
-        # Handle different content types
-        if 'text/html' in content_type:
-            # For HTML content, we need to modify any localhost references
-            content = response.content.decode('utf-8')
-            content = content.replace('http://localhost:8080', '/kiwix')
-            content = content.replace('localhost:8080', '/kiwix')
-            return content, response.status_code, headers
-        else:
-            # For other content types (images, CSS, JS), return as-is
-            return response.content, response.status_code, headers
-            
+        return response.content, response.status_code, headers
     except requests.RequestException as e:
         app.logger.error(f"Kiwix proxy error: {str(e)}")
         return jsonify({
