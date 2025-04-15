@@ -16,15 +16,9 @@ systemctl enable meshnode.service
 
 # Start services in correct order and check status
 echo "Starting services..."
-declare -a services=(
-    "set-wlan-ip.service"
-    "hostapd.service"
-    "dnsmasq.service"
-    "kiwix.service"
-    "meshnode.service"
-)
 
-for service in "${services[@]}"; do
+start_service() {
+    local service=$1
     echo "Starting $service..."
     if ! systemctl start "$service"; then
         echo "Error: Failed to start $service"
@@ -38,6 +32,12 @@ for service in "${services[@]}"; do
         exit 1
     fi
     echo "$service started successfully"
-done
+}
+
+start_service "set-wlan-ip.service"
+start_service "hostapd.service"
+start_service "dnsmasq.service"
+start_service "kiwix.service"
+start_service "meshnode.service"
 
 echo "All services started successfully" 
