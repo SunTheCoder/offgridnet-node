@@ -1,3 +1,14 @@
+# Create necessary directories
+echo "Creating directories..."
+mkdir -p /var/log/offgridnet
+mkdir -p /home/sunny/kiwix/data
+
+# Set permissions
+echo "Setting permissions..."
+chown -R sunny:sunny /var/log/offgridnet
+chown -R sunny:sunny /home/sunny/kiwix
+chown -R sunny:sunny /var/www/html
+
 # Copy systemd service files
 echo "Copying systemd service files..."
 cp systemd/hostapd.service /etc/systemd/system/
