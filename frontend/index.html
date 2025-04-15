@@ -90,7 +90,7 @@
         <div class="services">
             <div class="service-card">
                 <div class="service-icon">📘</div>
-                <a href="/kiwix" target="_blank" id="kiwix-link">Offline Wiki (Kiwix)</a>
+                <a href="http://192.168.4.1:5000" target="_blank" id="kiwix-link">Offline Wiki (Kiwix)</a>
             </div>
             
             <div class="service-card">
@@ -105,30 +105,10 @@
         </div>
     </div>
     <script>
-        // Check Kiwix service status
+        // Simple click handler for Kiwix link
         document.getElementById('kiwix-link').addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Show loading state
-            const link = this;
-            const originalText = link.textContent;
-            link.textContent = 'Loading...';
-            
-            // Check if the service is available
-            fetch('/kiwix')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Kiwix service not available');
-                    }
-                    // If service is available, open in a new window
-                    window.open('/kiwix', '_blank');
-                    link.textContent = originalText;
-                })
-                .catch(error => {
-                    link.textContent = originalText;
-                    alert('Kiwix service is not available. Please check the service status.');
-                    console.error('Kiwix error:', error);
-                });
+            // No need for special handling since we're linking directly
+            console.log('Opening Kiwix...');
         });
     </script>
 </body>

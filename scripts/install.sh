@@ -71,6 +71,7 @@ chown -R sunny:sunny /home/sunny/offgridnet-node
 su - sunny -c "cd /home/sunny/offgridnet-node/backend && python3 -m venv venv"
 su - sunny -c "cd /home/sunny/offgridnet-node/backend && source venv/bin/activate && pip install --upgrade pip"
 su - sunny -c "cd /home/sunny/offgridnet-node/backend && source venv/bin/activate && pip install -r requirements.txt"
+su - sunny -c "cd /home/sunny/offgridnet-node/backend && source venv/bin/activate && pip install requests"
 
 # Copy and set up systemd service
 cp systemd/offgridnet.service /etc/systemd/system/
