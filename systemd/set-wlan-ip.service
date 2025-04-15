@@ -12,7 +12,7 @@ ExecStart=/bin/bash -c 'ip link set wlan0 down'
 ExecStart=/bin/bash -c 'ip link set wlan0 up'
 ExecStart=/bin/bash -c 'iw dev wlan0 set type __ap'
 ExecStart=/bin/bash -c 'iw reg set US'
-ExecStart=/bin/bash -c 'iwconfig wlan0 power off'
+ExecStart=/bin/bash -c 'iw wlan0 set power_save off'
 # Wait and assign IP
 ExecStart=/bin/bash -c "/bin/sleep 10 && /sbin/ip addr add 192.168.4.1/24 dev wlan0"
 RemainAfterExit=true
