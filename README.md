@@ -21,7 +21,7 @@ A complete offline mesh system for Raspberry Pi, serving as a Wi-Fi access point
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/offgridnet-node.git
+   git clone https://github.com/sunthecoder/offgridnet-node.git
    cd offgridnet-node
    ```
 
