@@ -90,4 +90,35 @@ if ! systemctl is-active --quiet kiwix.service; then
     exit 1
 fi
 
-echo "Kiwix setup complete! Access at http://192.168.4.1:8080" 
+echo "Kiwix setup complete! Access at http://192.168.4.1:8080"
+
+echo "[3/4] Setting up Flask backend..."
+# Create necessary directories
+mkdir -p /home/sunny/offgridnet-node/backend
+chown -R sunny:sunny /home/sunny/offgridnet-node
+
+# Create and activate virtual environment
+su - sunny -c "cd /home/sunny/offgridnet-node/backend && python3 -m venv venv"
+su - sunny -c "cd /home/sunny/offgridnet-node/backend && source venv/bin/activate && pip install --upgrade pip"
+su - sunny -c "cd /home/sunny/offgridnet-node/backend && source venv/bin/activate && pip install -r requirements.txt"
+
+# Create log directory
+mkdir -p /var/log/offgridnet
+chown sunny:sunny /var/log/offgridnet
+chmod 755 /var/log/offgridnet
+
+# Copy and set up systemd service
+cp systemd/offgridnet.service /etc/systemd/system/
+chmod 644 /etc/systemd/system/offgridnet.service
+systemctl daemon-reload
+systemctl enable offgridnet.service
+
+# Start the service
+systemctl start offgridnet.service
+
+# Check service status
+if ! systemctl is-active --quiet offgridnet.service; then
+    echo "Error: offgridnet service failed to start"
+    systemctl status offgridnet.service
+    exit 1
+fi 
