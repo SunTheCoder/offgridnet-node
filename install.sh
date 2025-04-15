@@ -40,4 +40,31 @@ start_service "dnsmasq.service"
 start_service "kiwix.service"
 start_service "meshnode.service"
 
-echo "All services started successfully" 
+echo "All services started successfully"
+
+echo "[4/4] Setting up Kiwix..."
+# Create Kiwix directory and set permissions
+mkdir -p /home/sunny/kiwix/data
+chown -R sunny:sunny /home/sunny/kiwix
+chmod 755 /home/sunny/kiwix
+
+# Create log directory
+mkdir -p /var/log/offgridnet
+chown sunny:sunny /var/log/offgridnet
+chmod 755 /var/log/offgridnet
+
+# Copy service file
+cp systemd/kiwix.service /etc/systemd/system/
+chmod 644 /etc/systemd/system/kiwix.service
+
+# Enable and start Kiwix
+systemctl daemon-reload
+systemctl enable kiwix.service
+systemctl start kiwix.service
+
+# Check Kiwix status
+if ! systemctl is-active --quiet kiwix.service; then
+    echo "Error: Kiwix service failed to start"
+    systemctl status kiwix.service
+    exit 1
+fi 

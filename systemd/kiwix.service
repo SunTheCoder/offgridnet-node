@@ -6,6 +6,7 @@ Wants=hostapd.service dnsmasq.service
 
 [Service]
 User=sunny
+Group=sunny
 WorkingDirectory=/home/sunny/kiwix
 ExecStart=/usr/bin/kiwix-serve --library /home/sunny/kiwix/data/library.xml --port 8080
 Restart=always
