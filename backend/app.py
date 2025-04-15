@@ -1,10 +1,11 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
+import requests
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -38,6 +39,16 @@ class JournalEntry(db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+# Kiwix proxy route
+@app.route('/kiwix/<path:path>')
+def kiwix_proxy(path):
+    kiwix_url = f'http://localhost:8080/{path}'
+    try:
+        response = requests.get(kiwix_url)
+        return response.content, response.status_code, dict(response.headers)
+    except requests.RequestException as e:
+        return jsonify({'error': str(e)}), 500
 
 # Routes
 @app.route('/api/login', methods=['POST'])
