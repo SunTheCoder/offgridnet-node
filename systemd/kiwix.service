@@ -4,6 +4,9 @@ After=network.target network-online.target hostapd.service dnsmasq.service
 Wants=network-online.target
 Requires=network.target
 Wants=hostapd.service dnsmasq.service
+# Ensure filesystem is mounted and ready
+After=local-fs.target
+Requires=local-fs.target
 
 [Service]
 User=sunny
@@ -12,9 +15,12 @@ WorkingDirectory=/home/sunny/kiwix
 Environment=KIWIX_DEBUG=1
 # Wait for network and services to be fully ready
 ExecStartPre=/bin/sleep 60
+# Check network services are running
 ExecStartPre=/bin/bash -c 'until systemctl is-active --quiet hostapd.service && systemctl is-active --quiet dnsmasq.service && ping -c 1 192.168.4.1; do sleep 5; done'
-# Check network before each start attempt
-ExecStart=/bin/bash -c 'if systemctl is-active --quiet hostapd.service && systemctl is-active --quiet dnsmasq.service && ping -c 1 192.168.4.1; then /usr/bin/kiwix-serve --library /home/sunny/kiwix/data/library.xml --port 8080 --daemon --address 0.0.0.0; else exit 1; fi'
+# Check library.xml exists and is accessible
+ExecStartPre=/bin/bash -c 'until [ -f /home/sunny/kiwix/data/library.xml ] && [ -r /home/sunny/kiwix/data/library.xml ]; do sleep 5; done'
+# Check network and library before each start attempt
+ExecStart=/bin/bash -c 'if systemctl is-active --quiet hostapd.service && systemctl is-active --quiet dnsmasq.service && ping -c 1 192.168.4.1 && [ -f /home/sunny/kiwix/data/library.xml ] && [ -r /home/sunny/kiwix/data/library.xml ]; then /usr/bin/kiwix-serve --library /home/sunny/kiwix/data/library.xml --port 8080 --daemon --address 0.0.0.0; else exit 1; fi'
 # If the service fails, try to restart it
 Restart=always
 RestartSec=10

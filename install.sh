@@ -60,6 +60,16 @@ echo "Starting services..."
 start_service() {
     local service=$1
     echo "Starting $service..."
+    
+    # Special check for Kiwix service
+    if [ "$service" = "kiwix.service" ]; then
+        echo "Verifying Kiwix library..."
+        if [ ! -f "/home/sunny/kiwix/data/library.xml" ] || [ ! -r "/home/sunny/kiwix/data/library.xml" ]; then
+            echo "Error: Kiwix library.xml not found or not readable"
+            exit 1
+        fi
+    fi
+    
     if ! systemctl start "$service"; then
         echo "Error: Failed to start $service"
         systemctl status "$service"
