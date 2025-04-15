@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -40,15 +40,40 @@ class JournalEntry(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Kiwix proxy route
+# Kiwix proxy routes
+@app.route('/kiwix')
 @app.route('/kiwix/<path:path>')
-def kiwix_proxy(path):
+def kiwix_proxy(path=''):
     kiwix_url = f'http://localhost:8080/{path}'
     try:
-        response = requests.get(kiwix_url)
-        return response.content, response.status_code, dict(response.headers)
+        app.logger.info(f"Proxying request to Kiwix: {kiwix_url}")
+        response = requests.get(kiwix_url, timeout=10)
+        
+        # Log the response status
+        app.logger.info(f"Kiwix response status: {response.status_code}")
+        
+        # Preserve content type and other headers
+        headers = dict(response.headers)
+        
+        # If it's a redirect, handle it
+        if response.status_code in (301, 302, 303, 307, 308):
+            redirect_url = response.headers.get('Location', '')
+            app.logger.info(f"Kiwix redirect to: {redirect_url}")
+            return redirect(redirect_url)
+            
+        return response.content, response.status_code, headers
     except requests.RequestException as e:
-        return jsonify({'error': str(e)}), 500
+        app.logger.error(f"Kiwix proxy error: {str(e)}")
+        return jsonify({
+            'error': 'Kiwix service not available',
+            'details': str(e)
+        }), 503
+    except Exception as e:
+        app.logger.error(f"Unexpected error in Kiwix proxy: {str(e)}")
+        return jsonify({
+            'error': 'Internal server error',
+            'details': str(e)
+        }), 500
 
 # Routes
 @app.route('/api/login', methods=['POST'])
