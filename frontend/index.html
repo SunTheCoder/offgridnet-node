@@ -44,7 +44,7 @@
         
         .ascii-art {
             font-family: monospace;
-            font-size: 0.35em;
+            font-size: 0.45em;
             line-height: 1;
             color: var(--accent-color);
             white-space: pre;
@@ -110,6 +110,26 @@
         
         .btn:hover {
             background-color: var(--hover-color);
+        }
+
+        @media (max-width: 600px) {
+            .ascii-art {
+                font-size: 0.25em;
+                transform: scale(0.9);
+                transform-origin: center;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            header p {
+                font-size: 1em;
+            }
+            
+            .container {
+                padding: 10px;
+            }
         }
     </style>
 </head>
