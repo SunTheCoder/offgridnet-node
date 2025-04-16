@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Test comment for git
+sudo rfkill unblock wifi
+echo "Unblocked wifi"
+
 echo "Restarting OffGridNet services..."
 
 # Stop services in reverse order
