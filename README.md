@@ -67,7 +67,14 @@ The script will:
 
 ### Offline Wikipedia
 - Port: 8080
-- Content: Wikipedia Simple English (no images)
+- Content: 
+  - Wikipedia Simple English (no images)
+  - Wiktionary English
+  - Food Preparation Guide
+  - Knot Tying Guide
+  - Medical Information
+  - Post-Disaster Guide
+  - Water Resources Guide
 - Access: http://192.168.4.1:8080
 
 ### Web Interface
@@ -115,7 +122,16 @@ sudo systemctl status kiwix.service
 
 3. **Offline Wikipedia issues**
    - Check logs: `sudo journalctl -u kiwix.service`
-   - Verify ZIM file: `ls -l /home/sunny/kiwix/data/wikipedia_en_simple_all_nopic_2024-06.zim`
+   - Verify ZIM files: 
+     ```bash
+     ls -l /home/sunny/kiwix/data/wikipedia_en_simple_all_nopic_2024-06.zim
+     ls -l /home/sunny/kiwix/data/wikem_en_all_maxi_2021-02.zim
+     ls -l /home/sunny/kiwix/data/zimgit-food-preparation_en_2025-04.zim
+     ls -l /home/sunny/kiwix/data/zimgit-knots_en_2024-08.zim
+     ls -l /home/sunny/kiwix/data/zimgit-medicine_en_2024-08.zim
+     ls -l /home/sunny/kiwix/data/zimgit-post-disaster_en_2024-05.zim
+     ls -l /home/sunny/kiwix/data/zimgit-water_en_2024-08.zim
+     ```
    - Verify library: `ls -l /home/sunny/kiwix/data/library.xml`
 
 ## Contributing
