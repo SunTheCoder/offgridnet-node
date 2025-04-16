@@ -31,8 +31,8 @@ ufw allow 8080/tcp
 echo "Downloading ZIM files..."
 cd /home/sunny/kiwix/data
 
-# Array of ZIM files to download
-ZIM_FILES=(
+# List of ZIM files to download
+for zim in \
 "wikipedia/wikipedia_en_simple_all_nopic_2024-06.zim" \
 "other/wikem_en_all_maxi_2021-02.zim" \
 "other/zimgit-food-preparation_en_2025-04.zim" \
@@ -43,10 +43,7 @@ ZIM_FILES=(
 "other/whitewolfwiki_en_all_maxi_2024-06.zim" \
 "other/skin-of-color-society_en_all_2025-03.zim" \
 "other/wikitech_en_all_maxi_2024-06.zim"
-)
-
-# Download each file if it doesn't exist
-for zim in "${ZIM_FILES[@]}"; do
+do
     filename=$(basename "$zim")
     if [ ! -f "$filename" ]; then
         echo "Downloading $filename..."
