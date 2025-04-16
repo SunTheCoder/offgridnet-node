@@ -33,16 +33,16 @@ cd /home/sunny/kiwix/data
 
 # Array of ZIM files to download
 ZIM_FILES=(
-    "wikipedia/wikipedia_en_simple_all_nopic_2024-06.zim"
-    "other/wikem_en_all_maxi_2021-02.zim"
-    "other/zimgit-food-preparation_en_2025-04.zim"
-    "other/zimgit-knots_en_2024-08.zim"
-    "other/zimgit-medicine_en_2024-08.zim"
-    "other/zimgit-post-disaster_en_2024-05.zim"
-    "other/zimgit-water_en_2024-08.zim"
-    "other/whitewolfwiki_en_all_maxi_2024-06.zim"
-    "other/skin-of-color-society_en_all_2025-03.zim"
-    "other/wikitech_en_all_maxi_2024-06.zim"
+"wikipedia/wikipedia_en_simple_all_nopic_2024-06.zim" \
+"other/wikem_en_all_maxi_2021-02.zim" \
+"other/zimgit-food-preparation_en_2025-04.zim" \
+"other/zimgit-knots_en_2024-08.zim" \
+"other/zimgit-medicine_en_2024-08.zim" \
+"other/zimgit-post-disaster_en_2024-05.zim" \
+"other/zimgit-water_en_2024-08.zim" \
+"other/whitewolfwiki_en_all_maxi_2024-06.zim" \
+"other/skin-of-color-society_en_all_2025-03.zim" \
+"other/wikitech_en_all_maxi_2024-06.zim"
 )
 
 # Download each file if it doesn't exist
