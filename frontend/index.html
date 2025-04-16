@@ -34,35 +34,41 @@
             flex-direction: column;
             align-items: center;
         }
-        
-        header {
+
+        .ascii-container {
             width: 100%;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        
-        h1 {
-            color: var(--accent-color);
-            margin: 10px 0;
-            font-size: 2.5em;
-        }
-        
-        p {
-            color: var(--text-color);
-            margin: 0;
-            font-size: 1.2em;
+            justify-content: center;
+            margin: 20px 0;
         }
         
         .ascii-art {
             font-family: monospace;
-            font-size: 0.5em;
+            font-size: 0.45em;
             line-height: 1;
             color: var(--accent-color);
-            text-align: center;
-            margin: 20px 0;
             white-space: pre;
+            text-align: center;
+            margin: 0;
+            display: inline-block;
+        }
+        
+        header {
+            width: 100%;
+            text-align: center;
+            margin: 10px 0 30px 0;
+        }
+        
+        h1 {
+            color: var(--accent-color);
+            margin: 0;
+            font-size: 2.5em;
+        }
+        
+        header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2em;
+            opacity: 0.8;
         }
         
         .services {
@@ -109,17 +115,14 @@
 </head>
 <body>
     <div class="container">
+        <div class="ascii-container">
+            <pre class="ascii-art">░░      ░░        ░        ░░      ░░       ░░        ░       ░░   ░░░  ░        ░        ░
+▒  ▒▒▒▒  ▒  ▒▒▒▒▒▒▒  ▒▒▒▒▒▒▒  ▒▒▒▒▒▒▒  ▒▒▒▒  ▒▒▒▒  ▒▒▒▒  ▒▒▒▒  ▒    ▒▒  ▒  ▒▒▒▒▒▒▒▒▒▒  ▒▒▒▒
+▓  ▓▓▓▓  ▓      ▓▓▓      ▓▓▓  ▓▓▓   ▓       ▓▓▓▓▓  ▓▓▓▓  ▓▓▓▓  ▓  ▓  ▓  ▓      ▓▓▓▓▓▓  ▓▓▓▓
+█  ████  █  ███████  ███████  ████  █  ███  █████  ████  ████  █  ██    █  ██████████  ████
+██      ██  ███████  ████████      ██  ████  █        █       ██  ███   █        ████  ████</pre>
+        </div>
         <header>
-            <div class="ascii-art">
-                ░░      ░░        ░        ░░      ░░       ░░        ░       ░░   ░░░  ░        ░        ░
-                ▒  ▒▒▒▒  ▒  ▒▒▒▒▒▒▒  ▒▒▒▒▒▒▒  ▒▒▒▒▒▒▒  ▒▒▒▒  ▒▒▒▒  ▒▒▒▒  ▒▒▒▒  ▒    ▒▒  ▒  ▒▒▒▒▒▒▒▒▒▒  ▒▒▒▒
-                ▓  ▓▓▓▓  ▓      ▓▓▓      ▓▓▓  ▓▓▓   ▓       ▓▓▓▓▓  ▓▓▓▓  ▓▓▓▓  ▓  ▓  ▓  ▓      ▓▓▓▓▓▓  ▓▓▓▓
-                █  ████  █  ███████  ███████  ████  █  ███  █████  ████  ████  █  ██    █  ██████████  ████
-                ██      ██  ███████  ████████      ██  ████  █        █       ██  ███   █        ████  ████
-                                                                                                           
-                
-
-            </div>
             <h1>OffGridNet</h1>
             <p>Your offline network services</p>
         </header>
