@@ -27,43 +27,55 @@ fi
 echo "Configuring firewall..."
 ufw allow 8080/tcp
 
-# Download ZIM files from Kiwix
-echo "Downloading ZIM files..."
-cd /home/sunny/kiwix/data
-wget https://download.kiwix.org/zim/wikipedia/wikipedia_en_simple_all_nopic_2024-06.zim
-wget https://download.kiwix.org/zim/other/wikem_en_all_maxi_2021-02.zim
-wget https://download.kiwix.org/zim/other/zimgit-food-preparation_en_2025-04.zim
-wget https://download.kiwix.org/zim/other/zimgit-knots_en_2024-08.zim
-wget https://download.kiwix.org/zim/other/zimgit-medicine_en_2024-08.zim
-wget https://download.kiwix.org/zim/other/zimgit-post-disaster_en_2024-05.zim
-wget https://download.kiwix.org/zim/other/zimgit-water_en_2024-08.zim
-wget https://download.kiwix.org/zim/other/whitewolfwiki_en_all_maxi_2024-06.zim
-wget https://download.kiwix.org/zim/other/skin-of-color-society_en_all_2025-03.zim
-wget https://download.kiwix.org/zim/other/wikitech_en_all_maxi_2024-06.zim
-chown sunny:sunny wikipedia_en_simple_all_nopic_2024-06.zim
-chown sunny:sunny wikem_en_all_maxi_2021-02.zim
-chown sunny:sunny zimgit-food-preparation_en_2025-04.zim
-chown sunny:sunny zimgit-knots_en_2024-08.zim
-chown sunny:sunny zimgit-medicine_en_2024-08.zim
-chown sunny:sunny zimgit-post-disaster_en_2024-05.zim
-chown sunny:sunny zimgit-water_en_2024-08.zim
-chown sunny:sunny whitewolfwiki_en_all_maxi_2024-06.zim
-chown sunny:sunny skin-of-color-society_en_all_2025-03.zim
-chown sunny:sunny wikitech_en_all_maxi_2024-06.zim
+# Create Kiwix directories
+echo "Setting up Kiwix directories..."
+mkdir -p /home/sunny/kiwix/data
+chown -R sunny:sunny /home/sunny/kiwix
 
-# Generate library.xml
-echo "Generating Kiwix library..."
-kiwix-manage /home/sunny/kiwix/data/library.xml add /home/sunny/kiwix/data/wikipedia_en_simple_all_nopic_2024-06.zim
-kiwix-manage /home/sunny/kiwix/data/library.xml add /home/sunny/kiwix/data/wikem_en_all_maxi_2021-02.zim
-kiwix-manage /home/sunny/kiwix/data/library.xml add /home/sunny/kiwix/data/zimgit-food-preparation_en_2025-04.zim
-kiwix-manage /home/sunny/kiwix/data/library.xml add /home/sunny/kiwix/data/zimgit-knots_en_2024-08.zim
-kiwix-manage /home/sunny/kiwix/data/library.xml add /home/sunny/kiwix/data/zimgit-medicine_en_2024-08.zim
-kiwix-manage /home/sunny/kiwix/data/library.xml add /home/sunny/kiwix/data/zimgit-post-disaster_en_2024-05.zim
-kiwix-manage /home/sunny/kiwix/data/library.xml add /home/sunny/kiwix/data/zimgit-water_en_2024-08.zim
-kiwix-manage /home/sunny/kiwix/data/library.xml add /home/sunny/kiwix/data/whitewolfwiki_en_all_maxi_2024-06.zim
-kiwix-manage /home/sunny/kiwix/data/library.xml add /home/sunny/kiwix/data/skin-of-color-society_en_all_2025-03.zim
-kiwix-manage /home/sunny/kiwix/data/library.xml add /home/sunny/kiwix/data/wikitech_en_all_maxi_2024-06.zim
-chown sunny:sunny /home/sunny/kiwix/data/library.xml
+# Function to download ZIM file if it doesn't exist
+download_if_missing() {
+    local url=$1
+    local filename=$(basename "$url")
+    local filepath="/home/sunny/kiwix/data/$filename"
+    
+    if [ -f "$filepath" ]; then
+        echo "File $filename already exists, skipping download..."
+    else
+        echo "Downloading $filename..."
+        wget -P /home/sunny/kiwix/data "$url"
+        chown sunny:sunny "$filepath"
+    fi
+}
+
+# Download Kiwix content files
+echo "Checking and downloading Kiwix files..."
+cd /home/sunny/kiwix/data
+
+# List of ZIM files to download
+download_if_missing "https://download.kiwix.org/zim/wikipedia/wikipedia_en_simple_all_nopic_2024-06.zim"
+download_if_missing "https://download.kiwix.org/zim/wikem/wikem_en_all_maxi_2021-02.zim"
+download_if_missing "https://download.kiwix.org/zim/other/zimgit-food-preparation_en_2025-04.zim"
+download_if_missing "https://download.kiwix.org/zim/other/zimgit-knots_en_2024-08.zim"
+download_if_missing "https://download.kiwix.org/zim/other/zimgit-medicine_en_2024-08.zim"
+download_if_missing "https://download.kiwix.org/zim/other/zimgit-post-disaster_en_2024-05.zim"
+download_if_missing "https://download.kiwix.org/zim/other/zimgit-water_en_2024-08.zim"
+download_if_missing "https://download.kiwix.org/zim/other/whitewolfwiki_en_all_maxi_2024-06.zim"
+download_if_missing "https://download.kiwix.org/zim/other/skin-of-color-society_en_all_2025-03.zim"
+download_if_missing "https://download.kiwix.org/zim/other/wikitech_en_all_maxi_2024-06.zim"
+
+# Generate or update library.xml
+echo "Checking Kiwix library..."
+if [ ! -f "/home/sunny/kiwix/data/library.xml" ]; then
+    echo "Generating new library.xml..."
+    kiwix-manage /home/sunny/kiwix/data/library.xml add /home/sunny/kiwix/data/*.zim
+    chown sunny:sunny /home/sunny/kiwix/data/library.xml
+else
+    echo "Updating existing library.xml..."
+    # Remove existing entries and re-add all ZIM files
+    rm /home/sunny/kiwix/data/library.xml
+    kiwix-manage /home/sunny/kiwix/data/library.xml add /home/sunny/kiwix/data/*.zim
+    chown sunny:sunny /home/sunny/kiwix/data/library.xml
+fi
 
 # Copy systemd service files
 echo "Copying systemd service files..."
