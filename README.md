@@ -78,7 +78,6 @@ The script will:
   - White Wolf Wiki
   - Skin of Color Society
   - WikiTech
-  - African Storybook
 - Access: http://192.168.4.1:8080
 
 ### Web Interface
@@ -138,7 +137,6 @@ sudo systemctl status kiwix.service
      ls -l /home/sunny/kiwix/data/whitewolfwiki_en_all_maxi_2024-06.zim
      ls -l /home/sunny/kiwix/data/skin-of-color-society_en_all_2025-03.zim
      ls -l /home/sunny/kiwix/data/wikitech_en_all_maxi_2024-06.zim
-     ls -l /home/sunny/kiwix/data/africanstorybook.org_mul_all_2025-01.zim
      ```
    - Verify library: `ls -l /home/sunny/kiwix/data/library.xml`
 

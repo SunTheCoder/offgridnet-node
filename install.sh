@@ -40,7 +40,6 @@ wget https://download.kiwix.org/zim/other/zimgit-water_en_2024-08.zim
 wget https://download.kiwix.org/zim/other/whitewolfwiki_en_all_maxi_2024-06.zim
 wget https://download.kiwix.org/zim/other/skin-of-color-society_en_all_2025-03.zim
 wget https://download.kiwix.org/zim/other/wikitech_en_all_maxi_2024-06.zim
-wget https://download.kiwix.org/zim/other/africanstorybook.org_mul_all_2025-01.zim
 chown sunny:sunny wikipedia_en_simple_all_nopic_2024-06.zim
 chown sunny:sunny wikem_en_all_maxi_2021-02.zim
 chown sunny:sunny zimgit-food-preparation_en_2025-04.zim
@@ -51,7 +50,6 @@ chown sunny:sunny zimgit-water_en_2024-08.zim
 chown sunny:sunny whitewolfwiki_en_all_maxi_2024-06.zim
 chown sunny:sunny skin-of-color-society_en_all_2025-03.zim
 chown sunny:sunny wikitech_en_all_maxi_2024-06.zim
-chown sunny:sunny africanstorybook.org_mul_all_2025-01.zim
 
 # Generate library.xml
 echo "Generating Kiwix library..."
@@ -65,7 +63,6 @@ kiwix-manage /home/sunny/kiwix/data/library.xml add /home/sunny/kiwix/data/zimgi
 kiwix-manage /home/sunny/kiwix/data/library.xml add /home/sunny/kiwix/data/whitewolfwiki_en_all_maxi_2024-06.zim
 kiwix-manage /home/sunny/kiwix/data/library.xml add /home/sunny/kiwix/data/skin-of-color-society_en_all_2025-03.zim
 kiwix-manage /home/sunny/kiwix/data/library.xml add /home/sunny/kiwix/data/wikitech_en_all_maxi_2024-06.zim
-kiwix-manage /home/sunny/kiwix/data/library.xml add /home/sunny/kiwix/data/africanstorybook.org_mul_all_2025-01.zim
 chown sunny:sunny /home/sunny/kiwix/data/library.xml
 
 # Copy systemd service files
